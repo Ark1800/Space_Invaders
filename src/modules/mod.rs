@@ -13,3 +13,8 @@ use crate::modules::grid::draw_grid;
 --------------------------------------------
 */
 // Add modules below
+
+pub mod label;
+pub mod text_button;
+pub mod still_image;
+pub mod grid;
