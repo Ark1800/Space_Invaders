@@ -8,13 +8,19 @@ use macroquad::prelude::*;
 use crate::modules::still_image::StillImage;
 use crate::modules::text_button::TextButton;
 use crate::modules::label::Label;
-use crate::modules;
-use crate::modules::grid::draw_grid;
+use crate::modules::label::TextAlign;
+
 
 pub async fn run() -> String {
-    let mut lbl_howto = Label::new("Welcome to Space Invaders! \n Use A and D to move across the screen and dodge lasers! \n Press space to fire back! \n Don't shoot your barriers \n and don't let the enemies either! \n Good luck! and don't let them get too close...", 50.0, 400.0, 30);
-    lbl_howto.with_colors(WHITE, Some(WHITE));
-    lbl_howto.with_alignment(modules::label::TextAlign::Center);
+    //VIRTUAL W AND H
+    const VIRTUAL_WIDTH: f32 = 800.0;
+    const VIRTUAL_HEIGHT: f32 = 1200.0;
+    //LABELS AND BUTTONS AND IMAGES SETUPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+    let mut lbl_howto = Label::new("Welcome to Space Invaders! \n Use A and D to move across the screen and dodge lasers! \n Press space to fire back! \n Don't shoot your barriers \n and don't let the enemies either! \n Good luck! and don't let them get too close...", 30.0, 420.0, 30);
+    lbl_howto.with_colors(YELLOW, Some(BLACK));
+    lbl_howto.with_fixed_size(750.0, 250.0);
+    lbl_howto.with_alignment(TextAlign::Center);
+    lbl_howto.with_round(10.0);
     let title_img = StillImage::new(
         "assets/SpaceInvadersLogo.png",
         600.0,  // width
@@ -24,20 +30,62 @@ pub async fn run() -> String {
         true,   // Enable stretching
         1.0,    // Normal zoom (100%)
     ).await;
-    let btn_play = TextButton::new(
-        100.0,
-        200.0,
-        200.0,
-        60.0,
-        "Click Me",
-        BLUE,
-        GREEN,
+    let bg_img = StillImage::new(
+        "assets/spaceinvadersbg.png",
+        VIRTUAL_WIDTH,  // width
+        VIRTUAL_HEIGHT, // height
+        0.0,    // x position
+        0.0,    // y position
+        true,   // Enable stretching
+        1.0,    // Normal zoom (100%)
+    ).await;
+    let mut btn_play = TextButton::new(
+        50.0,
+        750.0,
+        300.0,
+        150.0,
+        "Play Game",
+        BLACK,
+        RED,
         30
     );
+    btn_play.with_text_color(YELLOW); 
+    btn_play.with_round(10.0);
+    let mut btn_highscores = TextButton::new(
+        450.0,
+        750.0,
+        300.0,
+        150.0,
+        "High Scores",
+        BLACK,
+        RED,
+        30
+    );
+    btn_highscores.with_text_color(YELLOW); 
+    btn_highscores.with_round(10.0);
+    let mut btn_exit = TextButton::new(
+        250.0,
+        950.0,
+        300.0,
+        150.0,
+        "Exit",
+        BLACK,
+        RED,
+        30
+    );
+    btn_exit.with_text_color(YELLOW); 
+    btn_exit.with_round(10.0);
     loop {
-        clear_background(BLUE);
-        draw_grid(50.0, BLACK);
-
+        bg_img.draw();
+        if btn_play.click() {
+            return "game_screen".to_string();
+        }
+        if btn_highscores.click() {
+            return "highscores_screen".to_string();
+        }
+        if btn_exit.click() {
+            return "exit".to_string();
+        }
         title_img.draw();
         lbl_howto.draw();
         next_frame().await;

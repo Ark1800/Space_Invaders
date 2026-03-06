@@ -8,6 +8,7 @@ use macroquad::prelude::*;
 
 pub async fn run() -> String {
     loop {
+        clear_background(BLUE);
         next_frame().await;
     }
 }
