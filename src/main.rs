@@ -24,6 +24,10 @@ fn window_conf() -> Conf {
     }
 }
 
+// Virtual resolution constants
+const VIRTUAL_WIDTH: f32 = 800.0;
+const VIRTUAL_HEIGHT: f32 = 1200.0;
+
 #[macroquad::main(window_conf)]
 async fn main() {
     let mut current_screen = "title_screen".to_string();
@@ -31,9 +35,9 @@ async fn main() {
     loop {
         if get_time() - last_switch > 0.01 {
             current_screen = match current_screen.as_str() {
-                "title_screen" => title_screen::run().await,
-                "game_screen" => game_screen::run().await,
-                "highscores_screen" => highscores_screen::run().await,
+                "title_screen" => title_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT).await,
+                "game_screen" => game_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT).await,
+                "highscores_screen" => highscores_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT).await,
                 _ => break,
             };
             last_switch = get_time();

@@ -9,12 +9,12 @@ use crate::modules::still_image::StillImage;
 use crate::modules::text_button::TextButton;
 use crate::modules::label::Label;
 use crate::modules::label::TextAlign;
+use crate::modules::scale::use_virtual_resolution;
 
 
-pub async fn run() -> String {
+pub async fn run(virtual_width: f32, virtual_height: f32) -> String {
     //VIRTUAL W AND H
-    const VIRTUAL_WIDTH: f32 = 800.0;
-    const VIRTUAL_HEIGHT: f32 = 1200.0;
+    use_virtual_resolution(virtual_width, virtual_height);
     //LABELS AND BUTTONS AND IMAGES SETUPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
     let mut lbl_howto = Label::new("Welcome to Space Invaders! \n Use A and D to move across the screen and dodge lasers! \n Press space to fire back! \n Don't shoot your barriers \n and don't let the enemies either! \n Good luck! and don't let them get too close...", 30.0, 420.0, 30);
     lbl_howto.with_colors(YELLOW, Some(BLACK));
@@ -32,8 +32,8 @@ pub async fn run() -> String {
     ).await;
     let bg_img = StillImage::new(
         "assets/spaceinvadersbg.png",
-        VIRTUAL_WIDTH,  // width
-        VIRTUAL_HEIGHT, // height
+        virtual_width,  // width
+        virtual_height, // height
         0.0,    // x position
         0.0,    // y position
         true,   // Enable stretching
