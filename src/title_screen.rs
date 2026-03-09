@@ -1,9 +1,8 @@
 /*
-By: <Your Name Here>
+By: Andrew Campbell
 Date: 2026-03-03
-Program Details: <Program Description Here>
+Program Details: initial title screen with instructions and buttons to play, view highscores, or exit
 */
-
 use macroquad::prelude::*;
 use crate::modules::still_image::StillImage;
 use crate::modules::text_button::TextButton;

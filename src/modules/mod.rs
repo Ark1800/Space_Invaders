@@ -22,3 +22,5 @@ pub mod scale;
 pub mod collision;
 pub mod player;
 pub mod preload_image;
+pub mod barrier;
+pub mod bullets;

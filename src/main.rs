@@ -1,7 +1,7 @@
 /*
-By: <Your Name Here>
+By: Andrew Campbell
 Date: 2026-03-03
-Program Details: <Program Description Here>
+Program Details: main switching screen, preloading assets, and setting up virtual resolution, this program is based off space invaders, fight off the aliens!
 */
 
 mod modules;
@@ -33,11 +33,11 @@ const VIRTUAL_HEIGHT: f32 = 1200.0;
 #[macroquad::main(window_conf)]
 async fn main() {
     //PRELOADEEDDDDDDDDD
-    let all_assets = vec!["enemy_1.png", "enemy_2.png", "enemy_3.png", "player_ship.png", "player_heart.png", "spaceinvadersbg.png", "SpaceInvadersLogo.png", "barrier_1.png", "barrier_2.png", "barrier_3.png", "barrier_4.png", "barrier_5.png", "barrier_6.png", "barrier_7.png", "barrier_8.png", "barrier_9.png", "barrier_10.png"];
+    let all_assets = vec!["assets/enemy_1.png", "assets/enemy_2.png", "assets/enemy_3.png", "assets/player_ship.png", "assets/player_heart.png", "assets/spaceinvadersbg.png", "assets/SpaceInvadersLogo.png", "assets/barrier_1.png", "assets/barrier_2.png", "assets/barrier_3.png", "assets/barrier_4.png", "assets/barrier_5.png", "assets/barrier_6.png", "assets/barrier_7.png", "assets/barrier_8.png", "assets/barrier_9.png", "assets/barrier_10.png"];
     let tm = TextureManager::new();
     // Using custom loading screen appearance
     let loading_options = LoadingScreenOptions {
-       title: Some("Maze Game".to_string()),
+       title: Some("Space Invaders".to_string()),
        background_color: BLACK,
        bar_fill_color: RED,
        // Use default values for other options

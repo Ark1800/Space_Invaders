@@ -1,7 +1,7 @@
 /*
-By: <Your Name Here>
+By: Andrew Campbell
 Date: 2026-03-03
-Program Details: <Program Description Here>
+Program Details: displaying highscores
 */
 
 use macroquad::prelude::*;
