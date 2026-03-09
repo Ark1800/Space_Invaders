@@ -5,15 +5,20 @@ Program Details: main game loop, where the player, barriers, and enemies will be
 */
 
 use macroquad::prelude::*;
-use crate::modules::{barrier, player};
+use crate::modules::player;
+use crate::modules::barrier;
+use crate::modules::bullets;
 use crate::modules::still_image::StillImage;
 use crate::modules::preload_image::TextureManager;
 use crate::modules::label::Label;
 use crate::modules::scale::use_virtual_resolution;
+//to dooooo
+//1. player shooting delay (add to planning)
+//2. enemies 
 
 pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager, _assets: Vec<&str>) -> String {
     //VARIABLESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
-    let mut bullets: Vec<String> = vec![];
+    let mut bullets: Vec<bullets::bullet> = vec![];
     let mut bullets_dir: Vec<f32> = vec![];
     let mut score = 0;
     use_virtual_resolution(virtual_width, virtual_height);
@@ -97,12 +102,17 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager, _
     } else {
        bg_img.set_preload(tm.get_preload_by_index(5).unwrap()); //set to background galaxy texture if error
     }
+    //timingggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+    let mut playerstarttime = get_time();
     loop {
         //PLAYERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
         let oldpos = player.get_oldpos();
-        let shot = player.handle_keypresses();
+        let mut playercurrenttime = get_time() - playerstarttime;
+        let shot = player.handle_keypresses(playercurrenttime);
         if shot {
-
+            let bullet = bullets::bullet::new("assets/player_bullet.png", player.view_player().get_x() + 45.0, player.view_player().get_y()).await;
+            bullets.push(bullet);
+            bullets_dir.push(-1.0);
         }
         player.move_x();
         if player.check_collision(&wall_l) {
@@ -111,11 +121,21 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager, _
         if player.check_collision(&wall_r) {
             player.set_x(oldpos);
         }
-
         //DRAWINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
         bg_img.draw();
         wall_l.draw();
         wall_r.draw();
+        //bullet drawing must be in between draws to be above bg. to avoid lag I don't loop through bullets twice, movement and drawing is handled simultaniously.
+        let mut rbc = 0; //(remove bullet counter), needs to be kept track of so index doesnt change mid for loop when bullets are removed
+        for i in 0..bullets.len() {
+            bullets[i-rbc].moving(bullets_dir[i-rbc]);
+            bullets[i-rbc].draw();
+            if bullets[i-rbc].get_y() < 100.0 {
+                bullets.remove(i-rbc);
+                bullets_dir.remove(i-rbc);
+                rbc += 1;
+            }
+        }
         heart_1.draw();
         heart_2.draw();
         heart_3.draw();

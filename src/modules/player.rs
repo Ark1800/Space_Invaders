@@ -32,7 +32,7 @@ impl Player {
         }
     }
     //movement functions
-    pub fn handle_keypresses(&mut self) -> bool {
+    pub fn handle_keypresses(&mut self, playercurrenttime: f64) -> bool {
         let mut shot = false;
         let mut move_dir= 0.0;
         if is_key_down(KeyCode::D) {
@@ -43,8 +43,10 @@ impl Player {
         }
         let movement = move_dir * self.move_speed * get_frame_time();
         self.movement = movement;
-        if is_key_down(KeyCode::W) {
+        if playercurrenttime > 0.5 {
+            if is_key_down(KeyCode::W) {
             shot = true;
+            }
         }
         shot
     }
@@ -77,5 +79,4 @@ impl Player {
     pub fn view_player(&self) -> &StillImage {
         &self.view
     }
-
 }

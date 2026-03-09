@@ -54,4 +54,8 @@ impl bullet {
         &self.view
     }
 
+    pub fn get_y(&self) -> f32 {
+        self.view.get_y()
+    }
+
 }
