@@ -8,10 +8,11 @@ use crate::modules::still_image::StillImage;
 use crate::modules::text_button::TextButton;
 use crate::modules::label::Label;
 use crate::modules::label::TextAlign;
+use crate::modules::preload_image::TextureManager;
 use crate::modules::scale::use_virtual_resolution;
 
 
-pub async fn run(virtual_width: f32, virtual_height: f32) -> String {
+pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -> String {
     //VIRTUAL W AND H
     use_virtual_resolution(virtual_width, virtual_height);
     //LABELS AND BUTTONS AND IMAGES SETUPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
@@ -20,8 +21,8 @@ pub async fn run(virtual_width: f32, virtual_height: f32) -> String {
     lbl_howto.with_fixed_size(750.0, 250.0);
     lbl_howto.with_alignment(TextAlign::Center);
     lbl_howto.with_round(10.0);
-    let title_img = StillImage::new(
-        "assets/SpaceInvadersLogo.png",
+    let mut title_img = StillImage::new(
+        "",
         600.0,  // width
         260.0,  // height
         100.0,  // x position
@@ -29,8 +30,9 @@ pub async fn run(virtual_width: f32, virtual_height: f32) -> String {
         true,   // Enable stretching
         1.0,    // Normal zoom (100%)
     ).await;
-    let bg_img = StillImage::new(
-        "assets/spaceinvadersbg.png",
+    title_img.set_preload(tm.get_preload("assets/SpaceInvadersLogo.png").unwrap());
+    let mut bg_img = StillImage::new(
+        "",
         virtual_width,  // width
         virtual_height, // height
         0.0,    // x position
@@ -38,6 +40,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32) -> String {
         true,   // Enable stretching
         1.0,    // Normal zoom (100%)
     ).await;
+    bg_img.set_preload(tm.get_preload("assets/spaceinvadersbg.png").unwrap());
     let mut btn_play = TextButton::new(
         50.0,
         750.0,

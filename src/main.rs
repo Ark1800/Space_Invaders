@@ -50,9 +50,9 @@ async fn main() {
     loop {
         if get_time() - last_switch > 0.01 {
             current_screen = match current_screen.as_str() {
-                "title_screen" => title_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT).await,
-                "game_screen" => game_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, &tm, all_assets.clone()).await,
-                "highscores_screen" => highscores_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT).await,
+                "title_screen" => title_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, &tm).await,
+                "game_screen" => game_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, &tm).await,
+                "highscores_screen" => highscores_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, &tm).await,
                 _ => break,
             };
             last_switch = get_time();

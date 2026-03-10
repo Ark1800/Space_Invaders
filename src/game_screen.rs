@@ -12,22 +12,25 @@ use crate::modules::still_image::StillImage;
 use crate::modules::preload_image::TextureManager;
 use crate::modules::label::Label;
 use crate::modules::scale::use_virtual_resolution;
+//use std::time::Instant;
+use web_time::{Instant, Duration}; 
+
 //to dooooo
 //1. player shooting delay (add to planning)
 //2. enemies 
 
-pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager, _assets: Vec<&str>) -> String {
+pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -> String {
     //VARIABLESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
     let mut bullets: Vec<bullets::bullet> = vec![];
     let mut bullets_dir: Vec<f32> = vec![];
     let mut score = 0;
     use_virtual_resolution(virtual_width, virtual_height);
     //MODULESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
-    let mut player = player::Player::new("assets/player_ship.png", virtual_width / 2.0, virtual_height - 160.0).await;
-    let mut barrier_1 = barrier::Barrier::new("assets/barrier_1.png", 87.5, virtual_height - 300.0).await;
-    let mut barrier_2 = barrier::Barrier::new("assets/barrier_1.png", 325.0, virtual_height - 300.0).await;
-    let mut barrier_3 = barrier::Barrier::new("assets/barrier_1.png", 562.5, virtual_height - 300.0).await;
-    //LABELSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+    let mut player = player::Player::new(tm.get_preload("assets/player_ship.png").unwrap(), virtual_width / 2.0, virtual_height - 160.0).await;
+    let mut barrier_1 = barrier::Barrier::new(tm.get_preload("assets/barrier_1.png").unwrap(), 87.5, virtual_height - 300.0).await;
+    let mut barrier_2 = barrier::Barrier::new(tm.get_preload("assets/barrier_1.png").unwrap(), 325.0, virtual_height - 300.0).await;
+    let mut barrier_3 = barrier::Barrier::new(tm.get_preload("assets/barrier_1.png").unwrap(), 562.5, virtual_height - 300.0).await;
+    //LABELSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS(SSSSSSSSSSS
     let mut lbl_score_str = Label::new("Score", 20.0, 40.0, 60);
     let mut lbl_score_num = Label::new("0", 170.0, 40.0, 60);
     lbl_score_str.with_colors(WHITE, Some(DARKGRAY));
@@ -42,6 +45,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager, _
         true,   // Enable stretching
         1.0,    // Normal zoom (100%)
     ).await;
+    bg_img.set_preload(tm.get_preload("assets/spaceinvadersbg.png").unwrap());
     let mut wall_l = StillImage::new(
         "",
         20.0,  // width
@@ -51,6 +55,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager, _
         true,   // Enable stretching
         1.0,    // Normal zoom (100%)
     ).await;
+    wall_l.set_preload(tm.get_preload("assets/spaceinvadersbg.png").unwrap());
     let mut wall_r = StillImage::new(
         "",
         20.0,  // width
@@ -60,13 +65,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager, _
         true,   // Enable stretching
         1.0,    // Normal zoom (100%)
     ).await;
-    if let Some(preloaded) = tm.get_preload("assets/spaceinvadersbg.png") {
-       bg_img.set_preload(preloaded.clone());
-       wall_l.set_preload(preloaded.clone());
-       wall_r.set_preload(preloaded);
-    } else {
-       bg_img.set_preload(tm.get_preload_by_index(5).unwrap()); //set to background galaxy texture if error
-    }
+    wall_r.set_preload(tm.get_preload("assets/spaceinvadersbg.png").unwrap());
     let mut heart_1 = StillImage::new(
         "",
         60.0,  // width
@@ -76,6 +75,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager, _
         true,   // Enable stretching
         1.0,    // Normal zoom (100%)
     ).await;
+    heart_1.set_preload(tm.get_preload("assets/player_heart.png").unwrap());
     let mut heart_2 = StillImage::new(
         "",
         60.0,  // width
@@ -85,6 +85,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager, _
         true,   // Enable stretching
         1.0,    // Normal zoom (100%)
     ).await;
+    heart_2.set_preload(tm.get_preload("assets/player_heart.png").unwrap());
     let mut heart_3 = StillImage::new(
         "",
         60.0,  // width
@@ -94,25 +95,18 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager, _
         true,   // Enable stretching
         1.0,    // Normal zoom (100%)
     ).await;
-    if let Some(preloaded) = tm.get_preload("assets/player_heart.png") {
-       heart_1.set_preload(preloaded.clone()); 
-       heart_2.set_preload(preloaded.clone());
-       heart_3.set_preload(preloaded);
-    
-    } else {
-       bg_img.set_preload(tm.get_preload_by_index(5).unwrap()); //set to background galaxy texture if error
-    }
-    //timingggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-    let mut playerstarttime = get_time();
+    heart_3.set_preload(tm.get_preload("assets/player_heart.png").unwrap());
+    let mut player_start_time = Instant::now();
     loop {
         //PLAYERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
         let oldpos = player.get_oldpos();
-        let mut playercurrenttime = get_time() - playerstarttime;
-        let shot = player.handle_keypresses(playercurrenttime);
+        let mut shot = player.handle_keypresses(player_start_time.elapsed().as_secs_f64());
         if shot {
             let bullet = bullets::bullet::new("assets/player_bullet.png", player.view_player().get_x() + 45.0, player.view_player().get_y()).await;
             bullets.push(bullet);
             bullets_dir.push(-1.0);
+            shot = false;
+            player_start_time = Instant::now();
         }
         player.move_x();
         if player.check_collision(&wall_l) {

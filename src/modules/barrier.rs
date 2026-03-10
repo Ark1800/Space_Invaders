@@ -14,9 +14,9 @@ pub struct Barrier {
 }
 
 impl Barrier {
-    pub async fn new(image_path: &str, x: f32, y: f32) -> Self {
-        let view = StillImage::new(
-            image_path,
+    pub async fn new(image_path: (Texture2D, Option<Vec<u8>>, String), x: f32, y: f32) -> Self {
+        let mut view = StillImage::new(
+            "",
             150.0,  // width 
             150.0,  // height
             x,     // x position
@@ -24,6 +24,7 @@ impl Barrier {
             true,   // Enable stretching
             1.0,    // Normal zoom (100%)
         ).await;
+        view.set_preload(image_path);
 
         Barrier {
             view,
