@@ -33,7 +33,7 @@ const VIRTUAL_HEIGHT: f32 = 1200.0;
 #[macroquad::main(window_conf)]
 async fn main() {
     //PRELOADEEDDDDDDDDD
-    let all_assets = vec!["assets/enemy_1.png", "assets/enemy_2.png", "assets/enemy_3.png", "assets/player_ship.png", "assets/player_heart.png", "assets/spaceinvadersbg.png", "assets/SpaceInvadersLogo.png", "assets/barrier_1.png", "assets/barrier_2.png", "assets/barrier_3.png", "assets/barrier_4.png", "assets/barrier_5.png", "assets/barrier_6.png", "assets/barrier_7.png", "assets/barrier_8.png", "assets/barrier_9.png", "assets/barrier_10.png"];
+    let all_assets = vec!["assets/enemy_1.png", "assets/enemy_2.png", "assets/enemy_3.png", "assets/player_ship.png", "assets/player_heart.png", "assets/player_bullet.png", "assets/spaceinvadersbg.png", "assets/SpaceInvadersLogo.png", "assets/barrier_1.png", "assets/barrier_2.png", "assets/barrier_3.png", "assets/barrier_4.png", "assets/barrier_5.png", "assets/barrier_6.png", "assets/barrier_7.png", "assets/barrier_8.png", "assets/barrier_9.png", "assets/barrier_10.png"];
     let tm = TextureManager::new();
     // Using custom loading screen appearance
     let loading_options = LoadingScreenOptions {

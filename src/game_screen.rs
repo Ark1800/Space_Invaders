@@ -12,8 +12,6 @@ use crate::modules::still_image::StillImage;
 use crate::modules::preload_image::TextureManager;
 use crate::modules::label::Label;
 use crate::modules::scale::use_virtual_resolution;
-//use std::time::Instant;
-use web_time::{Instant, Duration}; 
 
 //to dooooo
 //1. player shooting delay (add to planning)
@@ -96,17 +94,18 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
         1.0,    // Normal zoom (100%)
     ).await;
     heart_3.set_preload(tm.get_preload("assets/player_heart.png").unwrap());
-    let mut player_start_time = Instant::now();
+    let shot_cooldown_secs = 0.20;
+    let mut last_shot_time = get_time() - shot_cooldown_secs;
     loop {
         //PLAYERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
         let oldpos = player.get_oldpos();
-        let mut shot = player.handle_keypresses(player_start_time.elapsed().as_secs_f64());
+        let mut shot = player.handle_keypresses(get_time() - last_shot_time);
         if shot {
-            let bullet = bullets::bullet::new("assets/player_bullet.png", player.view_player().get_x() + 45.0, player.view_player().get_y()).await;
+            let bullet = bullets::bullet::new(tm.get_preload("assets/player_bullet.png").unwrap(), player.view_player().get_x() + 42.5, player.view_player().get_y()).await;
             bullets.push(bullet);
             bullets_dir.push(-1.0);
             shot = false;
-            player_start_time = Instant::now();
+            last_shot_time = get_time();
         }
         player.move_x();
         if player.check_collision(&wall_l) {
