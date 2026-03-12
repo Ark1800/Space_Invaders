@@ -7,13 +7,13 @@ use macroquad::prelude::*;
 use crate::modules::still_image::StillImage;
 use crate::modules::collision::check_collision;
 
-pub struct bullet {
+pub struct Bullet {
     view: StillImage,
     move_speed: f32,
     movement: f32,
 }
 
-impl bullet {
+impl Bullet {
     pub async fn new(image_path: (Texture2D, Option<Vec<u8>>, String), x: f32, y: f32) -> Self {
         let mut view = StillImage::new(
             "",
@@ -25,7 +25,7 @@ impl bullet {
             1.0,    // Normal zoom (100%)
         ).await;
         view.set_preload(image_path);
-        bullet {
+        Bullet {
             view,
             move_speed: 350.0, // Movement speed in pixels per second
             movement: 0.0

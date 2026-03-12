@@ -5,30 +5,51 @@ Program Details: main game loop, where the player, barriers, and enemies will be
 */
 
 use macroquad::prelude::*;
-use crate::modules::player;
-use crate::modules::barrier;
-use crate::modules::bullets;
+use crate::modules::player::Player;
+use crate::modules::barrier::Barrier;
+use crate::modules::bullets::Bullet;
+use crate::modules::enemy::{self, Enemy};
 use crate::modules::still_image::StillImage;
 use crate::modules::preload_image::TextureManager;
 use crate::modules::label::Label;
 use crate::modules::scale::use_virtual_resolution;
 
 //to dooooo
-//1. player shooting delay (add to planning)
-//2. enemies 
+//1. enemies
+//2. barriers
+//3. high score and score
+//4. score tracking and saving 
 
 pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -> String {
     //VARIABLESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
-    let mut bullets: Vec<bullets::bullet> = vec![];
+    let mut bullets: Vec<Bullet> = vec![];
     let mut bullets_dir: Vec<f32> = vec![];
-    let mut score = 0;
+    let mut enemies: Vec<Enemy> = vec![];
+    //let mut score = 0;
     use_virtual_resolution(virtual_width, virtual_height);
     //MODULESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
-    let mut player = player::Player::new(tm.get_preload("assets/player_ship.png").unwrap(), virtual_width / 2.0, virtual_height - 160.0).await;
-    let mut barrier_1 = barrier::Barrier::new(tm.get_preload("assets/barrier_1.png").unwrap(), 87.5, virtual_height - 300.0).await;
-    let mut barrier_2 = barrier::Barrier::new(tm.get_preload("assets/barrier_1.png").unwrap(), 325.0, virtual_height - 300.0).await;
-    let mut barrier_3 = barrier::Barrier::new(tm.get_preload("assets/barrier_1.png").unwrap(), 562.5, virtual_height - 300.0).await;
-    //LABELSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS(SSSSSSSSSSS
+    let mut player = Player::new(tm.get_preload("assets/player_ship.png").unwrap(), virtual_width / 2.0, virtual_height - 160.0).await;
+    let mut barrier_1 = Barrier::new(tm.get_preload("assets/barrier_1.png").unwrap(), 87.5, virtual_height - 300.0).await;
+    let mut barrier_2 = Barrier::new(tm.get_preload("assets/barrier_1.png").unwrap(), 325.0, virtual_height - 300.0).await;
+    let mut barrier_3 = Barrier::new(tm.get_preload("assets/barrier_1.png").unwrap(), 562.5, virtual_height - 300.0).await;
+    let mut enemy_x = 80.0;
+    let mut enemy_y = 100.0;
+    let mut enemy_image: (Texture2D, Option<Vec<u8>>, String); //setting first enemy image type
+    for i in 0..4 {
+        match i {
+            0 | 2 => enemy_image = tm.get_preload("assets/enemy_1.png").unwrap(),
+            1 | 3 => enemy_image = tm.get_preload("assets/enemy_2.png").unwrap(),
+            _ => enemy_image = tm.get_preload("assets/enemy_1.png").unwrap()
+        };
+        for j in 0..6 {
+            let enemy = Enemy::new(enemy_image.clone(), 50.0, 50.0, 100.0 + enemy_x, 100.0 + enemy_y).await;
+            enemies.push(enemy);
+            enemy_x += 75.0;
+        }
+        enemy_x = 80.0;
+        enemy_y += 75.0;
+    }
+    //LABELSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS(SSSSSSSS(SSS
     let mut lbl_score_str = Label::new("Score", 20.0, 40.0, 60);
     let mut lbl_score_num = Label::new("0", 170.0, 40.0, 60);
     lbl_score_str.with_colors(WHITE, Some(DARKGRAY));
@@ -101,7 +122,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
         let oldpos = player.get_oldpos();
         let mut shot = player.handle_keypresses(get_time() - last_shot_time);
         if shot {
-            let bullet = bullets::bullet::new(tm.get_preload("assets/player_bullet.png").unwrap(), player.view_player().get_x() + 42.5, player.view_player().get_y()).await;
+            let bullet = Bullet::new(tm.get_preload("assets/player_bullet.png").unwrap(), player.view_player().get_x() + 40.0, player.view_player().get_y()).await;
             bullets.push(bullet);
             bullets_dir.push(-1.0);
             shot = false;
@@ -123,11 +144,18 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
         for i in 0..bullets.len() {
             bullets[i-rbc].moving(bullets_dir[i-rbc]);
             bullets[i-rbc].draw();
-            if bullets[i-rbc].get_y() < 100.0 {
+            if bullets[i-rbc].get_y() < 40.0 { //bullet size is 30 so make sure its off screen
                 bullets.remove(i-rbc);
                 bullets_dir.remove(i-rbc);
                 rbc += 1;
             }
+        }
+        for i in 0..enemies.len() {
+            let move_down = enemies[i].movement(&wall_l, &wall_r);
+            if move_down {
+               enemies[i].move_down();
+            }
+            enemies[i].draw();
         }
         heart_1.draw();
         heart_2.draw();

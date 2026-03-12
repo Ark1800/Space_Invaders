@@ -43,8 +43,7 @@ impl Player {
         }
         let movement = move_dir * self.move_speed * get_frame_time();
         self.movement = movement;
-        if start >= 1.0 {
-            println!("3 seconds passed");
+        if start >= 0.5 {
             if is_key_down(KeyCode::W) {
             shot = true;
             }
