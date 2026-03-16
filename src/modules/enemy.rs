@@ -27,15 +27,17 @@ impl Enemy {
         }
     }
 
-    pub fn movement(&mut self, wall_l: &StillImage, wall_r: &StillImage) -> bool {
-        let  mut move_down = false;
-        self.movement.x = self.move_speed * get_frame_time();
-        if check_collision(&self.view, wall_l, 1) || check_collision(&self.view, wall_r, 1) {
-            self.move_speed = -self.move_speed;
-            move_down = true;
-        }
+    pub fn movement(&mut self, enemy_dir: f32) {
+        self.movement.x = self.move_speed * get_frame_time() * enemy_dir;
         self.view.set_x(self.view.get_x() + self.movement.x);
-        move_down
+    }
+
+    pub fn hit_wall(&mut self, wall_l: &StillImage, wall_r: &StillImage) -> bool {
+        let mut hit_wall = false; 
+        if check_collision(&self.view, wall_l, 1) || check_collision(&self.view, wall_r, 1) {
+            hit_wall = true;
+        }
+        hit_wall
     }
 
      pub fn draw(&self) {
@@ -43,7 +45,7 @@ impl Enemy {
     }
 
     pub fn move_down(&mut self) {
-        self.view.set_y(self.view.get_y() + 50.0);
+        self.view.set_y(self.view.get_y() + 20.0);
     }
 
     pub fn view_enemy(&self) -> &StillImage {

@@ -7,6 +7,7 @@ Program Details: barrier module, handles barrier movement, drawing, and collisio
 use macroquad::prelude::*;
 use crate::modules::still_image::StillImage;
 use crate::modules::collision::check_collision;
+use crate::modules::preload_image::TextureManager;
 
 pub struct Barrier {
     view: StillImage,
@@ -28,20 +29,28 @@ impl Barrier {
 
         Barrier {
             view,
-            count: 0
+            count: 1
         }
     }
 
-    pub async fn check_collision(&mut self, img2: &StillImage) {
+    pub async fn check_collision(&mut self, img2: &StillImage, tm: &TextureManager) -> bool {
+        let mut collided = false;
         if check_collision(self.view_barrier(), img2, 1) {
             self.count += 1;
-            self.change_image(self.count).await;
+            self.change_image(self.count, tm).await;
+            collided = true;
         }
+        collided
     }
 
-    pub async fn change_image(&mut self, count: i32) {
-        let new_image_path = format!("assets/barrier_{}.png", count);
-        self.view.set_texture(&new_image_path).await;
+    pub async fn change_image(&mut self, count: i32, tm: &TextureManager) {
+        if count <= 10 { //so barrier can take 10 hits and then dissapears
+            let image_path = format!("assets/barrier_{}.png", count);
+            self.view.set_preload(tm.get_preload(&image_path).unwrap());
+        }
+        else {
+            self.view.clear(); //removes image after 9 hits ("" image not working so clear whole thing works too)
+        }
     }
 
     pub fn view_barrier(&self) -> &StillImage {
