@@ -4,6 +4,8 @@ Date: 2026-03-03
 Program Details: main game loop, where the player, barriers, and enemies will be drawn and updated, also handles collisions and score
 */
 
+use std::usize;
+
 use macroquad::prelude::*;
 use crate::modules::player::Player;
 use crate::modules::barrier::Barrier;
@@ -13,6 +15,9 @@ use crate::modules::still_image::StillImage;
 use crate::modules::preload_image::TextureManager;
 use crate::modules::label::Label;
 use crate::modules::scale::use_virtual_resolution;
+use miniquad::date;
+
+
 
 //to dooooo
 //1. enemy shooting
@@ -29,6 +34,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
     let mut enemy_dir = 1.0;
     let mut enemy_hitwall = false;
     let mut score = 0;
+    rand::srand(date::now() as u64);
     use_virtual_resolution(virtual_width, virtual_height);
     //MODULESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
     let mut player = Player::new(tm.get_preload("assets/player_ship.png").unwrap(), virtual_width / 2.0, virtual_height - 160.0).await;
@@ -41,19 +47,34 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
     let mut enemy_x = 80.0;
     let mut enemy_y = 100.0;
     let mut enemy_image: (Texture2D, Option<Vec<u8>>, String); //setting first enemy image type
-    for i in 0..4 {
+    let mut column_1: Vec<usize> = vec![];
+    let mut column_2: Vec<usize> = vec![];
+    let mut column_3: Vec<usize> = vec![];
+    let mut column_4: Vec<usize> = vec![];
+    let mut column_5: Vec<usize> = vec![];
+    let mut column_6: Vec<usize> = vec![];
+    for i in 0..6 {
         match i {
             0 | 2 => enemy_image = tm.get_preload("assets/enemy_1.png").unwrap(),
             1 | 3 => enemy_image = tm.get_preload("assets/enemy_2.png").unwrap(),
             _ => enemy_image = tm.get_preload("assets/enemy_1.png").unwrap()
         };
-        for j in 0..6 {
+        for j in 0..4 {
             let enemy = Enemy::new(enemy_image.clone(), 50.0, 50.0, 100.0 + enemy_x, 100.0 + enemy_y).await;
             enemies.push(enemy);
-            enemy_x += 75.0;
+            let enemy_index = enemies.len() - 1;
+            enemy_y += 75.0;
+                match i {
+                    0 => column_1.push(enemy_index), //needs to store as index cause enemy can't be cloned
+                    1 => column_2.push(enemy_index),
+                    2 => column_3.push(enemy_index), 
+                    3 => column_4.push(enemy_index),
+                    4 => column_5.push(enemy_index),
+                    _ => column_6.push(enemy_index)
+                };
         }
-        enemy_x = 80.0;
-        enemy_y += 75.0;
+        enemy_y = 100.0;
+        enemy_x += 75.0;
     }
     //LABELSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS(SSSSSSSS(SSS
     let mut lbl_score_str = Label::new("Score", 20.0, 40.0, 60);
@@ -136,10 +157,20 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
             last_shot_time = get_time();
         }
         if get_time() - enemy_shot_time >= 1.0 {
-            //random_rng = 
-            //let bullet = Bullet::new(tm.get_preload("assets/player_bullet.png").unwrap(), player.view_player().get_x() + 40.0, player.view_player().get_y()).await;
-            //bullets.push(bullet);
-           // bullets_dir.push(-1.0);
+            let random_num = rand::gen_range(0, 6); 
+            let index = match random_num {
+                0 => column_1[column_1.len() - 1],
+                1 => column_2[column_2.len() - 1],
+                2 => column_3[column_3.len() - 1],
+                3 => column_4[column_4.len() - 1],
+                4 => column_5[column_5.len() - 1],
+                _ => column_6[column_6.len() - 1],
+            };
+            let x = enemies[index].view_enemy().get_x();
+            let y = enemies[index].view_enemy().get_y();                                        
+            let bullet = Bullet::new(tm.get_preload("assets/player_bullet.png").unwrap(), x+25.0, y+60.0).await; //+ numbers for middle and below enemy
+            bullets.push(bullet);
+            bullets_dir.push(1.0);
             enemy_shot_time = get_time()
         }
         player.move_x();
@@ -154,35 +185,49 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
         wall_l.draw();
         wall_r.draw();
         //bullet drawing must be in between draws to be above bg. to avoid lag I don't loop through bullets twice, movement and drawing is handled simultaniously.
-        let mut rbc = 0; //(remove bullet counter), needs to be kept track of so index doesnt change mid for loop when bullets are removed
+        let mut rbc = 0; //[remove bullet counter], needs to be kept track of so index doesnt change mid for loop when bullets are removed
         //BULLET LOOPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
         for i in 0..bullets.len() {
             //if i or index is less then rbc, that means the bullet was removed and loop should stop
             if i < rbc {
                 continue;
             }
-            let bullet_idx = i - rbc;
-            if bullet_idx >= bullets.len() || bullet_idx >= bullets_dir.len() {
+            let bullet_index = i - rbc;
+            if bullet_index >= bullets.len() || bullet_index >= bullets_dir.len() {
                 continue;
             }
             //move the bullets and draw them
-            bullets[bullet_idx].moving(bullets_dir[bullet_idx]);
-            bullets[bullet_idx].draw();
-            //CHECK EACH TIME IF A BULLET IS REMOVED and delete each time (only needed for for loop collisions)
+            bullets[bullet_index].moving(bullets_dir[bullet_index]);
+            bullets[bullet_index].draw();
+            //CHECK EACH TIME IF A BULLET IS REMOVED and delete each time [only needed for for loop collisions]
             let mut bullet_removed = false;
             //first bullet check if off screen then remove
-            if bullets[bullet_idx].get_y() < -40.0 { //bullet size is 30 so make sure its off screen
-                bullets.remove(bullet_idx);
-                bullets_dir.remove(bullet_idx);
+            if bullets[bullet_index].get_y() < -40.0 { //bullet size is 30 so make sure its off screen
+                bullets.remove(bullet_index);
+                bullets_dir.remove(bullet_index);
                 rbc += 1;
                 bullet_removed = true;
                 continue;
             }
             //second bullet check if collision with enemy, delete both
             for j in  0..enemies.len() {
-                if bullets[bullet_idx].check_collision(enemies[j].view_enemy()) {
-                    bullets.remove(bullet_idx);
-                    bullets_dir.remove(bullet_idx);
+                if bullets[bullet_index].check_collision(enemies[j].view_enemy()) {
+                    bullets.remove(bullet_index);
+                    bullets_dir.remove(bullet_index);
+                    //current workinggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+                    let columns = [&mut column_1, &mut column_2, &mut column_3, &mut column_4, &mut column_5, &mut column_6,];
+                        for column in columns { //.iter gives each item a string, .position checks everyting, if x == j, CHOP THAT SHIT
+                            if let (position: usize) = column.iter().position(|&index| index == j) {
+                                column.remove(position);
+                            }                        
+                            for index in column.iter_mut() {
+                                if *index > j {
+                                    *index -= 1;
+                                    }
+                            }
+                        }
+                    }
+
                     enemies.remove(j);
                     rbc += 1;
                     bullet_removed = true;
@@ -195,10 +240,10 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
                 continue;
             }
             for x in 0..barriers.len() {
-                let collided = barriers[x].check_collision(bullets[bullet_idx].view_bullet(), tm).await;
+                let collided = barriers[x].check_collision(bullets[bullet_index].view_bullet(), tm).await;
                 if collided {
-                    bullets.remove(bullet_idx);
-                    bullets_dir.remove(bullet_idx);
+                    bullets.remove(bullet_index);
+                    bullets_dir.remove(bullet_index);
                     rbc += 1;
                     break; //breaks out of barrier loop to avoid multiple collisions with one bullet
                 }
@@ -210,7 +255,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
         //ENEMY LOOPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
         for i in 0..enemies.len() {
             enemies[i].movement(enemy_dir);
-        }
+        }        //AI helped with iter.mut idea, goes through every enemy and checks if they hit the wal individually, avoiding conflict of simultaneous collision
         if enemies.iter_mut().any(|enemy| enemy.hit_wall(&wall_l, &wall_r)) {
             if !enemy_hitwall {
                 enemy_dir = -enemy_dir;
