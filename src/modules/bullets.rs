@@ -27,7 +27,7 @@ impl Bullet {
         view.set_preload(image_path);
         Bullet {
             view,
-            move_speed: 500.0, // Movement speed in pixels per second
+            move_speed: 700.0, // Movement speed in pixels per second
             movement: 0.0
         }
     }

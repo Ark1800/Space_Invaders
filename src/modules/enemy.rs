@@ -6,6 +6,7 @@ pub struct Enemy {
     view: StillImage,
     move_speed: f32,
     movement: Vec2,
+    enemy_shotdelay: f64,
 }
 
 impl Enemy {
@@ -24,6 +25,7 @@ impl Enemy {
             view,
             move_speed: 200.0, // Movement speed in pixels per second
             movement: vec2(0.0, 0.0),
+            enemy_shotdelay: 1.5, // Time in seconds between shots
         }
     }
 
@@ -50,5 +52,17 @@ impl Enemy {
 
     pub fn view_enemy(&self) -> &StillImage {
         &self.view
+    }
+
+    pub fn get_shot_delay(&self) -> f64 {
+        self.enemy_shotdelay
+    }
+
+    pub fn increase_stats(&mut self, count: f32) {
+        self.move_speed += count * 250.0; // Increase movement speed by 25 pixels per second (count is in 0.1)
+        self.enemy_shotdelay -= count as f64; // Decrease shot delay by 0.1 seconds
+        if self.enemy_shotdelay <= 0.1 {
+            self.enemy_shotdelay = 0.1; // Set a minimum shot delay to prevent it from becoming too fast
+        }
     }
 }

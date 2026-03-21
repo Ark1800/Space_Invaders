@@ -61,7 +61,7 @@ if btn_text.click() {
 Note: For buttons with transparent backgrounds (set normal_color with alpha=0), 
 only the text area is clickable, not the entire button area.
 */
-use macroquad::prelude::*;
+use macroquad::{prelude::*, text};
 #[cfg(feature = "scale")]
 use crate::modules::scale::mouse_position_world as mouse_position;
 
@@ -90,6 +90,7 @@ pub struct TextButton {
     cached_text_position: Vec2,
     cached_rect: Rect,
     pub visible: bool,
+    pub button_enabled: bool, // New field to control button interactivity without hiding it
 }
 
 impl TextButton {
@@ -129,7 +130,20 @@ impl TextButton {
             cached_text_position,
             cached_rect,
             visible: true,
+            button_enabled: true,
         }
+    }
+
+    //ANDREWS FUNCTIONS :)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+    pub fn set_enabled(&mut self, enabled: bool) {
+        self.button_enabled = enabled;
+    }
+
+    pub fn set_all_colors (&mut self, normal_color: Color, hover_color: Color, text_color: Color, hovertext_color: Color) {
+        self.normal_color = normal_color;
+        self.hover_color = hover_color;
+        self.text_color = text_color;
+        self.hover_text_color = hovertext_color;
     }
 
     // Method to set custom font - taking Font by value since it implements Clone
@@ -254,7 +268,7 @@ impl TextButton {
 
     pub fn click(&self) -> bool {
         if !self.visible {
-            return false; // If not visible, don't process clicks
+            return false; // If not visible, don't draw or process clicks
         }
         // Get mouse position
         let (mouse_x, mouse_y) = mouse_position();
@@ -348,7 +362,7 @@ impl TextButton {
         }
 
         // After drawing, check if the button was clicked
-        is_hovered && self.enabled && is_mouse_button_pressed(MouseButton::Left)
+        is_hovered && self.button_enabled && is_mouse_button_pressed(MouseButton::Left)
     }
 }
 

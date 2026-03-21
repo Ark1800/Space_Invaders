@@ -11,6 +11,7 @@ pub struct Player {
     view: StillImage,
     move_speed: f32,
     movement: f32,
+    player_score: i32
 }
 
 impl Player {
@@ -28,7 +29,8 @@ impl Player {
         Player {
             view,
             move_speed: 350.0, // Movement speed in pixels per second
-            movement: 0.0
+            movement: 0.0,
+            player_score: 0
         }
     }
     //movement functions
@@ -44,7 +46,7 @@ impl Player {
         let movement = move_dir * self.move_speed * get_frame_time();
         self.movement = movement;
         if start >= 0.3 { //delay between shots
-            if is_key_down(KeyCode::W) {
+            if is_key_down(KeyCode::W) || is_key_down(KeyCode::Space) {
             shot = true;
             }
         }

@@ -60,4 +60,8 @@ impl Barrier {
     pub fn draw(&self) {
         self.view.draw();
     }
+
+    pub fn reset_count(&mut self) {
+        self.count = 1;
+    }
 }

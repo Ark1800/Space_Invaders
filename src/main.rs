@@ -8,6 +8,7 @@ mod modules;
 mod game_screen;
 mod title_screen;
 mod highscores_screen;
+mod gameover_screen;
 use macroquad::prelude::*;
 use crate::modules::preload_image::TextureManager;
 use crate::modules::preload_image::LoadingScreenOptions;
@@ -33,7 +34,7 @@ const VIRTUAL_HEIGHT: f32 = 1200.0;
 #[macroquad::main(window_conf)]
 async fn main() {
     //PRELOADEEDDDDDDDDD           
-    let all_assets = vec!["assets/enemy_1.png", "assets/enemy_2.png", "assets/player_ship.png", "assets/player_heart.png", "assets/player_bullet.png", "assets/spaceinvadersbg.png", "assets/SpaceInvadersLogo.png", "assets/barrier_1.png", "assets/barrier_2.png", "assets/barrier_3.png", "assets/barrier_4.png", "assets/barrier_5.png", "assets/barrier_6.png", "assets/barrier_7.png", "assets/barrier_8.png", "assets/barrier_9.png", "assets/barrier_10.png"];
+    let all_assets = vec!["assets/gameover_bg.png", "assets/enemy_1.png", "assets/enemy_2.png", "assets/player_ship.png", "assets/player_heart.png", "assets/player_bullet.png", "assets/spaceinvadersbg.png", "assets/SpaceInvadersLogo.png", "assets/barrier_1.png", "assets/barrier_2.png", "assets/barrier_3.png", "assets/barrier_4.png", "assets/barrier_5.png", "assets/barrier_6.png", "assets/barrier_7.png", "assets/barrier_8.png", "assets/barrier_9.png", "assets/barrier_10.png"];
     let tm = TextureManager::new();
     // Using custom loading screen appearance
     let loading_options = LoadingScreenOptions {
@@ -45,16 +46,20 @@ async fn main() {
     };
     tm.preload_with_loading_screen(&all_assets, Some(loading_options)).await;
     //SCREENSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
-    let mut current_screen = "title_screen".to_string();
+    let mut current_screen = "highscores_screen".to_string();
+    let mut last_score = 0;
     let mut last_switch = get_time() - 0.02;
     loop {
         if get_time() - last_switch > 0.01 {
-            current_screen = match current_screen.as_str() {
-                "title_screen" => title_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, &tm).await,
+            let (next_screen, next_score) = match current_screen.as_str() {
+                "title_screen" => (title_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, &tm).await, last_score),
                 "game_screen" => game_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, &tm).await,
-                "highscores_screen" => highscores_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, &tm).await,
+                "highscores_screen" => (highscores_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, &tm).await, last_score),
+                "gameover_screen" => (gameover_screen::run(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, &tm, last_score).await, last_score),
                 _ => break,
             };
+            current_screen = next_screen;
+            last_score = next_score;
             last_switch = get_time();
         }
         next_frame().await;

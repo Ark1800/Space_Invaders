@@ -25,3 +25,6 @@ pub mod preload_image;
 pub mod barrier;
 pub mod bullets;
 pub mod enemy; 
+pub mod text_input;
+pub mod listview;
+pub mod textfiles;
