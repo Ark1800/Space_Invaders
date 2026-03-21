@@ -16,7 +16,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
     //VIRTUAL W AND H
     use_virtual_resolution(virtual_width, virtual_height);
     //LABELS AND BUTTONS AND IMAGES SETUPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
-    let mut lbl_howto = Label::new("Welcome to Space Invaders! \n Use A and D to move across the screen and dodge lasers! \n Press W or Space to fire back! \n Don't shoot your barriers \n and don't let the enemies either! \n Good luck! and don't let them get too close...", 30.0, 420.0, 30);
+    let mut lbl_howto = Label::new("Welcome to Space Invaders! \n Use A and D to move across the screen and dodge lasers! \n Press W or Space to fire back! \n Don't shoot your barriers \n Don't let the enemies either! \n Good luck! and don't let them get too close...", 30.0, 420.0, 30);
     lbl_howto.with_colors(YELLOW, Some(BLACK));
     lbl_howto.with_fixed_size(750.0, 250.0);
     lbl_howto.with_alignment(TextAlign::Center);

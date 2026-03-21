@@ -196,7 +196,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
                 {
                     let x = enemies[index].view_enemy().get_x();
                     let y = enemies[index].view_enemy().get_y();
-                    let bullet = Bullet::new(tm.get_preload("assets/player_bullet.png").unwrap(), x + 25.0, y + 60.0).await; //+ numbers for middle and below enemy
+                    let bullet = Bullet::new(tm.get_preload("assets/enemy_bullet.png").unwrap(), x + 25.0, y + 60.0).await; //+ numbers for middle and below enemy
                     bullets.push(bullet);
                     bullets_dir.push(1.0);
                     enemy_shot_time = get_time();

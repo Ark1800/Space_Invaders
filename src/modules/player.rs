@@ -43,7 +43,7 @@ impl Player {
         }
         let movement = move_dir * self.move_speed * get_frame_time();
         self.movement = movement;
-        if start >= 0.3 { //delay between shots
+        if start >= 0.5 { //delay between shots
             if is_key_down(KeyCode::W) || is_key_down(KeyCode::Space) {
             shot = true;
             }
