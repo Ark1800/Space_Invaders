@@ -58,6 +58,10 @@ impl Enemy {
         self.enemy_shotdelay
     }
 
+    pub fn get_y(&self) -> f32 {
+        self.view.get_y()
+    }
+
     pub fn increase_stats(&mut self, count: f32) {
         self.move_speed += count * 250.0; // Increase movement speed by 25 pixels per second (count is in 0.1)
         self.enemy_shotdelay -= count as f64; // Decrease shot delay by 0.1 seconds

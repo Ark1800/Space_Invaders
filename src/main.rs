@@ -46,7 +46,7 @@ async fn main() {
     };
     tm.preload_with_loading_screen(&all_assets, Some(loading_options)).await;
     //SCREENSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
-    let mut current_screen = "highscores_screen".to_string();
+    let mut current_screen = "title_screen".to_string();
     let mut last_score = 0;
     let mut last_switch = get_time() - 0.02;
     loop {

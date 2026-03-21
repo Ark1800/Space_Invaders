@@ -17,12 +17,9 @@ use crate::modules::preload_image::TextureManager;
 use crate::modules::label::Label;
 use crate::modules::scale::use_virtual_resolution;
 use miniquad::date;
-
-
-
-//to dooooo
-//1. game over screen
-//2. high score tracking and saving
+//to do
+//1. add what happens if enemies reach barriers
+//2. fix textbox taking text during game
 
 pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -> (String, i32) {
     //VARIABLESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
@@ -242,7 +239,6 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
                     continue;
                 }
                 //player collision with bullets
-                //CURRENTLY WORKINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
                 if check_collision(player.view_player(), bullets[bullet_index].view_bullet(), 1) {
                     if playerhealth > 0 {
                         playerhealth -= 1;
@@ -313,7 +309,12 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
             } else {
                 enemy_hitwall = false;
             }
-            //RESETINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG\
+            //RESETINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+            for i in 0..enemies.len() {
+                if enemies[i].get_y() >= virtual_height - 300.0 { //if enemy reaches barrier line, game over
+                    return ("gameover_screen".to_string(), score);
+                }
+            }
             if enemies.is_empty() {
                 bullets.clear();
                 bullets_dir.clear();
