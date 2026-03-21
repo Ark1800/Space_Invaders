@@ -37,7 +37,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
     list_view.with_colors(YELLOW, Some(BLACK), Some(LIGHTGRAY));
     list_view.set_width(700.0);
     list_view.with_max_visible_items(11);
-    //LABELLSSSSSSSSSSSS
+    //LABELLSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
     let mut lbl_highscores = Label::new(format!("High Scores"), 250.0, 100.0, 60);
     lbl_highscores.with_colors(WHITE, Some(DARKGRAY));
     //IMAGESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS AND BUTTONSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS

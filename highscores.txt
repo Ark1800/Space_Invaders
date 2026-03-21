@@ -1,3 +1,5 @@
 Andrew: 570
 Draedyn: 300
 Leo: 440
+Ark: 110
+Odysseus: 250

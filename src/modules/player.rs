@@ -11,7 +11,6 @@ pub struct Player {
     view: StillImage,
     move_speed: f32,
     movement: f32,
-    player_score: i32
 }
 
 impl Player {
@@ -30,7 +29,6 @@ impl Player {
             view,
             move_speed: 350.0, // Movement speed in pixels per second
             movement: 0.0,
-            player_score: 0
         }
     }
     //movement functions

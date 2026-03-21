@@ -120,7 +120,8 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
     let mut enemy_shot_time = get_time();
     let mut levelclear_time = 0.0;
     loop {
-        let mut pause = false;
+        #[allow(unused)]
+        let mut pause = false; //allow unused because pause is only used to create variable
         if get_time() - levelclear_time < 2.0 {
             pause = true;
         }
@@ -134,12 +135,11 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
         if !pause {
             //PLAYERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
             let oldpos = player.get_oldpos();
-            let mut shot = player.handle_keypresses(get_time() - last_shot_time);
+            let shot = player.handle_keypresses(get_time() - last_shot_time);
             if shot {
                 let bullet = Bullet::new(tm.get_preload("assets/player_bullet.png").unwrap(), player.view_player().get_x()+40.0, player.view_player().get_y()-35.0).await;
                 bullets.push(bullet);
                 bullets_dir.push(-1.0);
-                shot = false;
                 last_shot_time = get_time();
             }
             //ENEMYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
@@ -235,7 +235,6 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
                     bullets.remove(bullet_index);
                     bullets_dir.remove(bullet_index);
                     rbc += 1;
-                    bullet_removed = true;
                     continue;
                 }
                 //player collision with bullets
@@ -249,7 +248,6 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
                     bullets.remove(bullet_index);
                     bullets_dir.remove(bullet_index);
                     rbc += 1;
-                    bullet_removed = true;
                     continue;
                 }
                 //second bullet check if collision with enemy, delete both
@@ -271,9 +269,9 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
                             }
                         enemies.remove(j);
                         rbc += 1;
-                        bullet_removed = true;
                         score += 10;
                         lbl_score.set_text(format!("Score: {}", score));
+                        bullet_removed = true;
                         break; //breaks out of enemy loop to avoid multiple collisions with one bullet
                     }
                 }
@@ -376,7 +374,7 @@ async fn enemy_creation(tm: &TextureManager) -> (Vec<Enemy>, Vec<usize>, Vec<usi
             1 | 3 => enemy_image = tm.get_preload("assets/enemy_2.png").unwrap(),
             _ => enemy_image = tm.get_preload("assets/enemy_1.png").unwrap()
         };
-        for j in 0..4 {
+        for _j in 0..4 {
             let enemy = Enemy::new(enemy_image.clone(), 50.0, 50.0, 100.0 + enemy_x, 100.0 + enemy_y).await;
             enemies.push(enemy);
             let j = enemies.len() - 1;

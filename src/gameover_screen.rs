@@ -20,10 +20,12 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager, s
     let mut lbl_score = Label::new(format!("High Score: {}", score), 250.0, 700.0, 60);
     lbl_score.with_colors(WHITE, Some(DARKGRAY));
     let mut txt_entername = TextInput::new(50.0, 750.0, 325.0, 90.0, 40.0);
+    txt_entername.set_enabled(false);
     txt_entername.with_colors(YELLOW, WHITE, BLACK, RED);
     txt_entername.set_prompt("Enter your name...");
     txt_entername.set_prompt_color(PURPLE);
-    //BUTTONSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS AND IMAGESSSSSSSSSSSSSS(SSS
+    let mut name_input_ready = false;
+    //BUTTONSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS AND IMAGESSSSSSSSSSSSSSSSS
     let mut gameover_img = StillImage::new(
         "", // image path
         virtual_width,  // width
@@ -80,7 +82,15 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager, s
     );
     btn_exit.with_text_color(YELLOW);
     btn_exit.with_round(10.0);
-    loop {
+    loop { //AI helped with this idea, WASD inputs was carrying over to next screen during transition, so it is only enabled when= keys stop being held
+        if !name_input_ready { //second boolean so once it passes (after keys are released) it doesn't keep running and cause issues with text input
+            while get_char_pressed().is_some() {}
+            let any_key_held = !get_keys_down().is_empty();
+            if !any_key_held {
+                txt_entername.set_enabled(true);
+                name_input_ready = true;
+            }
+        }
         bg_img.draw();
         gameover_img.draw();
         lbl_score.draw();
@@ -104,7 +114,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager, s
             btn_savehighscore.set_text("Saved!");
             btn_savehighscore.with_text_color(BLACK);
             btn_savehighscore.set_all_colors(GREEN, GREEN, BLACK, BLACK);
-            btn_savehighscore.set_enabled(false); // Disable the button after saving
+            btn_savehighscore.set_enabled(false); //Disable the button after saving
         }
         next_frame().await;
     }
