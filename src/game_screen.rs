@@ -16,6 +16,7 @@ use crate::modules::still_image::StillImage;
 use crate::modules::preload_image::TextureManager;
 use crate::modules::label::Label;
 use crate::modules::scale::use_virtual_resolution;
+use crate::modules::text_button::TextButton;
 use miniquad::date;
 //to do
 //1. add what happens if enemies reach barriers
@@ -43,7 +44,7 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
     barriers.push(barrier_1);
     barriers.push(barrier_2);
     barriers.push(barrier_3);
-    //LABELSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS(SSSSSSSS(SSS
+    //LABELSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS and butooooooooooooooooooooooons
     let mut lbl_score = Label::new("Score: 0", 20.0, 40.0, 60);
     let mut lbl_levelclear = Label::new("Level Clear!", virtual_width / 2.0 - 200.0, virtual_height / 2.0 - 50.0, 80);
     let mut lbl_level = Label::new("Level: 1", 20.0, 100.0, 60);
@@ -51,7 +52,19 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
     lbl_levelclear.with_colors(WHITE, Some(DARKGRAY));
     lbl_score.with_colors(WHITE, Some(DARKGRAY));
     lbl_levelclear.set_visible(false);
-    //IMAGESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+    let mut btn_return = TextButton::new(
+        330.0,
+        10.0,
+        240.0,
+        100.0,
+        "Return",
+        BLACK,
+        RED,
+        30
+    );
+    btn_return.with_text_color(YELLOW);
+    btn_return.with_round(10.0);
+    //IMAGESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
     let mut bg_img = StillImage::new(
         "",
         virtual_width,  // width
@@ -348,6 +361,9 @@ pub async fn run(virtual_width: f32, virtual_height: f32, tm: &TextureManager) -
             if playerhealth > 0 {
                 heart.draw();
             }
+        }
+        if btn_return.click() {
+            return ("title_screen".to_string(), score);
         }
         lbl_score.draw();
         lbl_levelclear.draw();

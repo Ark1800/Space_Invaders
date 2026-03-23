@@ -4,3 +4,4 @@ Leo: 440
 Ark: 110
 Odysseus: 250
 Hamilton: 1610
+Leo: 620
