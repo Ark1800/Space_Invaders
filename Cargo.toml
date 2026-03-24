@@ -16,4 +16,4 @@ native = ["rayon"]    # The "native" feature enables Rayon
 rayon = "1.7"  # Rayon is only included for native builds
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 gloo-storage = "0.3"
-wasm-bindgen = "0.2"
+wasm-bindgen = "=0.2.106"
