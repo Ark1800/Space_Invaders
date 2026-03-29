@@ -7,3 +7,4 @@ Hamilton: 1610
 Leo: 620
 Jaquavious III: 500
 Leo: 1360
+67: 210
